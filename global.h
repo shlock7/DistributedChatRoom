@@ -2,6 +2,10 @@
 #define GLOBAL_H
 #include <QWidget>
 #include <functional>
+#include <QRegularExpression>
+#include <memory>
+#include <iostream>
+#include <mutex>
 #include "QStyle"
 
 /*
