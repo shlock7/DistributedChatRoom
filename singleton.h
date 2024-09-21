@@ -2,12 +2,13 @@
 #define SINGLETON_H
 
 #include "global.h"
+
 template <typename T>
 class Singleton
 {
 protected:
     Singleton() = default;
-    // 禁用拷贝构造和拷贝赋值
+    // 单例类禁用拷贝构造和拷贝赋值
     Singleton(const Singleton<T>&) = delete;
     Singleton &operator = (const Singleton<T>& st) = delete;
 
