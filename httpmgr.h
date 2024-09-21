@@ -17,15 +17,15 @@ class HttpMgr : public QObject, public Singleton<HttpMgr>, public std::enable_sh
     Q_OBJECT
 public:
     ~HttpMgr();
+    // 发送请求
+    void PostHttpReq(QUrl url, QJsonObject json, ReqId req_id, Modules mod);
 private:
     // 将基类声明为友元，才能正确构造派生类对象
     friend class Singleton<HttpMgr>;
     HttpMgr();
     QNetworkAccessManager _manager;
-    // 发送请求 路由, json数据
-    void PostHttpReq(QUrl url, QJsonObject json, ReqId req_id, Modules mod);
 
-private slots:
+public slots:
     void slot_http_finish(ReqId id, QString res, ErrorCodes err, Modules mod);
 signals:
     void sig_http_finish(ReqId id, QString res, ErrorCodes err, Modules mod); // http发送完就发送这个信号，通知其他模块
