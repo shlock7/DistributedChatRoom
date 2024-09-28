@@ -1,2 +1,5 @@
-/DistributedChatRoom.pro.user
-build/
+/client/DistributedChatRoom.pro.user
+/client/build/
+/server/GateServer/GateServer/
+/server/GateServer/x64/
+/server/GateServer/.vs/
