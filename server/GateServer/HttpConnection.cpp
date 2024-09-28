@@ -68,6 +68,42 @@ std::string UrlDecode(const std::string& str)
     return strTemp;
 }
 
+void HttpConnection::PreParseGetParam() {
+    // 提取 URI  
+    auto uri = _request.target();
+    // 查找查询字符串的开始位置（即 '?' 的位置）  
+    auto query_pos = uri.find('?');
+    if (query_pos == std::string::npos) {
+        _get_url = uri;
+        return;
+    }
+
+    _get_url = uri.substr(0, query_pos);
+    std::string query_string = uri.substr(query_pos + 1);
+    std::string key;
+    std::string value;
+    size_t pos = 0;
+    while ((pos = query_string.find('&')) != std::string::npos) {
+        auto pair = query_string.substr(0, pos);
+        size_t eq_pos = pair.find('=');
+        if (eq_pos != std::string::npos) {
+            key = UrlDecode(pair.substr(0, eq_pos)); // 假设有 url_decode 函数来处理URL解码  
+            value = UrlDecode(pair.substr(eq_pos + 1));
+            _get_params[key] = value;
+        }
+        query_string.erase(0, pos + 1);
+    }
+    // 处理最后一个参数对（如果没有 & 分隔符）  
+    if (!query_string.empty()) {
+        size_t eq_pos = query_string.find('=');
+        if (eq_pos != std::string::npos) {
+            key = UrlDecode(query_string.substr(0, eq_pos));
+            value = UrlDecode(query_string.substr(eq_pos + 1));
+            _get_params[key] = value;
+        }
+    }
+}
+
 void HttpConnection::HandleReq()
 {
     _response.version(_request.version());  // 设置版本
@@ -91,6 +127,8 @@ void HttpConnection::HandleReq()
         return;
     }
 }
+
+
 
 void HttpConnection::WriteResponse()
 {
