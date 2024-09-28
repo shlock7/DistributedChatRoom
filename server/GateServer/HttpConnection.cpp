@@ -69,7 +69,7 @@ std::string UrlDecode(const std::string& str)
 }
 
 void HttpConnection::PreParseGetParam() {
-    // 提取 URI  
+    // 提取 URI : ex: get_test?key1=value1&key2=value2
     auto uri = _request.target();
     // 查找查询字符串的开始位置（即 '?' 的位置）  
     auto query_pos = uri.find('?');
@@ -78,6 +78,7 @@ void HttpConnection::PreParseGetParam() {
         return;
     }
 
+    // query_pos 指向?的位置
     _get_url = uri.substr(0, query_pos);
     std::string query_string = uri.substr(query_pos + 1);
     std::string key;
@@ -88,7 +89,7 @@ void HttpConnection::PreParseGetParam() {
         size_t eq_pos = pair.find('=');
         if (eq_pos != std::string::npos) {
             key = UrlDecode(pair.substr(0, eq_pos)); // 假设有 url_decode 函数来处理URL解码  
-            value = UrlDecode(pair.substr(eq_pos + 1));
+            value = UrlDecode(pair.substr(eq_pos + 1)); // 解码去掉带%的特殊字符
             _get_params[key] = value;
         }
         query_string.erase(0, pos + 1);
@@ -111,7 +112,8 @@ void HttpConnection::HandleReq()
 
     if (_request.method() == http::verb::get) // 处理http的get请求
     {
-        bool success = LogicSystem::GetInstance()->HandleGet(_request.target(), shared_from_this());
+        PreParseGetParam(); 
+        bool success = LogicSystem::GetInstance()->HandleGet(_get_url, shared_from_this());
         if (!success)
         {
             _response.result(http::status::not_found);
