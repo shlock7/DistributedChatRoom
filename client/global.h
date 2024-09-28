@@ -8,6 +8,7 @@
 #include <mutex>
 #include <QByteArray>
 #include <QNetworkReply>
+#include <QJsonObject>
 #include "QStyle"
 
 /*

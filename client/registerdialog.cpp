@@ -14,6 +14,7 @@ RegisterDialog::RegisterDialog(QWidget *parent) :
     repolish(ui->err_tip);
     connect(HttpMgr::GetInstance().get(), &HttpMgr::sig_reg_mod_finish,
             this, &RegisterDialog::solt_reg_mod_finish);
+    initHttpHandlers();
 }
 
 RegisterDialog::~RegisterDialog()
@@ -35,6 +36,10 @@ void RegisterDialog::on_get_code_clicked()
     if (match)   // 邮箱匹配成功
     {
         // 发送http验证码
+        QJsonObject json_obj;
+        json_obj["email"] = email;
+        HttpMgr::GetInstance()->PostHttpReq(QUrl("http://localhost:8080/get_varifycode"),
+                                            json_obj, ReqId::ID_GET_VARIFY_CODE,Modules::REGISTERMOD);
     }
     else
     {
