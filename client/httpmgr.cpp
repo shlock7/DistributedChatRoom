@@ -4,7 +4,12 @@ HttpMgr::~HttpMgr()
 {
 
 }
-
+/* 发送 Post 请求
+ * url:请求的url
+ * json：请求的内容通过json 发送
+ * req_id：请求的id
+ * mod：判断是哪个模块发出的
+*/
 void HttpMgr::PostHttpReq(QUrl url, QJsonObject json, ReqId req_id, Modules mod)
 {
     //创建一个HTTP POST请求，并设置请求头和请求体

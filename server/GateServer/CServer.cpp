@@ -12,6 +12,7 @@ CServer::CServer(boost::asio::io_context& ioc, unsigned short& port)
 void CServer::Start()
 {
     auto self = shared_from_this();
+    // 异步接收客户端连接，将连接套接字存到_socket，接受连接后调用lambda回调
     _acceptor.async_accept(_socket, [self](beast::error_code ec) {
         try {
             //出错则放弃这个连接，继续监听新链接

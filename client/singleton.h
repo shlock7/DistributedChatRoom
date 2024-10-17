@@ -22,7 +22,10 @@ public:
         // 第二次调用时，这个函数就不会执行了
         std::call_once(s_flag, [&]()
         {
-            // 思考一下为什么不用make_shared()
+            /* 不能用make_shared()
+             * make_shared() 创建shared_ptr 时会隐式调用构造函数
+             * 但是单例类中构造函数被设置为protected，无法被智能指针访问
+            */
             _instance = std::shared_ptr<T>(new T);
         });
         return _instance;

@@ -78,12 +78,13 @@ void HttpConnection::PreParseGetParam() {
         return;
     }
 
-    // query_pos 指向?的位置
+    // 分割字符串，query_pos 指向?的位置
     _get_url = uri.substr(0, query_pos);
     std::string query_string = uri.substr(query_pos + 1);
     std::string key;
     std::string value;
     size_t pos = 0;
+    // 参数通过 & 分隔，通过查找 & 进行键值对提取
     while ((pos = query_string.find('&')) != std::string::npos) {
         auto pair = query_string.substr(0, pos);
         size_t eq_pos = pair.find('=');

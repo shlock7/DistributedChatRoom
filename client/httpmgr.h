@@ -16,7 +16,7 @@ class HttpMgr : public QObject, public Singleton<HttpMgr>, public std::enable_sh
 {
     Q_OBJECT
 public:
-    ~HttpMgr();
+    ~HttpMgr();  // 单例类析构的时候会调用T的析构，这里T就是HttpMgr，所以析构函数需要设置为公有类型
     // 发送请求
     void PostHttpReq(QUrl url, QJsonObject json, ReqId req_id, Modules mod);
 private:
