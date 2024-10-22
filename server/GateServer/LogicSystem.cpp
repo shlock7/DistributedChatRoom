@@ -59,7 +59,7 @@ LogicSystem::LogicSystem()
 
 			// 如果解析成功，从 src_root 中提取邮箱地址，并将其添加到响应中
 			auto email = src_root["email"].asString();
-			// 发送grpc请求并获得响应
+			// 发送grpc请求并获得响应  这里会调用js的服务
 			GetVarifyRsp rsp = VerifyGrpcClient::GetInstance()->GetVarifyCode(email);
 			std::cout << "email is " << email << std::endl;
 			root["error"] = rsp.error();
