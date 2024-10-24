@@ -11,6 +11,6 @@ public:
 private:
     tcp::acceptor  _acceptor;
     net::io_context& _ioc;      // 上下文
-    tcp::socket   _socket;      // 用来复用的socket
+    // tcp::socket   _socket;      // 用来复用的socket  有了连接池之后不用这个了
 };
 
