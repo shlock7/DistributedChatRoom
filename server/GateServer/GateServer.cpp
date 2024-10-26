@@ -108,8 +108,6 @@ void TestRedis()
 // redis封装测试用例
 void TestRedisMgr()
 {
-    assert(RedisMgr::GetInstance()->Connect("81.68.86.146", 6380));
-    assert(RedisMgr::GetInstance()->Auth("123456"));
     assert(RedisMgr::GetInstance()->Set("blogwebsite", "llfc.club"));
     std::string value = "";
     assert(RedisMgr::GetInstance()->Get("blogwebsite", value));
@@ -127,13 +125,14 @@ void TestRedisMgr()
     assert(RedisMgr::GetInstance()->RPop("lpushkey1", value));
     assert(RedisMgr::GetInstance()->LPop("lpushkey1", value));
     assert(RedisMgr::GetInstance()->LPop("lpushkey2", value) == false);
-    RedisMgr::GetInstance()->Close();
+    //RedisMgr::GetInstance()->Close();
+    std::cout << "Done" << std::endl;
 }
 
 int main()
 {
     //TestRedis();
-    //TestRedisMgr();
+    TestRedisMgr();
     auto& gCfgMgr = ConfigMgr::Inst();
     std::string gate_port_str = gCfgMgr["GateServer"]["Port"];
     unsigned short gate_port = atoi(gate_port_str.c_str());
