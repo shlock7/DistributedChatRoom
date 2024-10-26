@@ -38,7 +38,8 @@ struct SectionInfo
 class ConfigMgr
 {
 public:
-    ~ConfigMgr() {
+    ~ConfigMgr()
+    {
         _config_map.clear();
     }
 
@@ -50,8 +51,6 @@ public:
         }
         return _config_map[section];
     }
-
-    ConfigMgr();
 
     // 拷贝构造
     ConfigMgr(const ConfigMgr& src)
@@ -69,7 +68,18 @@ public:
         _config_map = src._config_map;
     }
 
+    static ConfigMgr& Inst()
+    {
+        // 生命周期跟进程同步，可见范围是局部作用域
+        // C++ 11后，多线程访问局部静态变量只有第一次访问时会初始化
+        // 是线程安全的
+        static ConfigMgr cfg_mgr;
+        return cfg_mgr;
+    }
+
+
 private:
+    ConfigMgr();
     // 这里key是section，value是一个具体的key-value对
     std::map<std::string, SectionInfo> _config_map;
 };
