@@ -20,6 +20,7 @@ struct SectionInfo
         }
         // 不是自己拷贝自己
         this->_section_datas = src._section_datas;
+        return *this;
     }
 
     std::map<std::string, std::string> _section_datas;
