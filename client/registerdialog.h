@@ -20,6 +20,8 @@ private slots:
     void on_get_code_clicked();
     void solt_reg_mod_finish(ReqId id, QString res, ErrorCodes err);
 
+    void on_sure_btn_clicked();
+
 private:
     void showTip(QString str, bool b_ok);  // 邮箱错误提示
     Ui::RegisterDialog *ui;

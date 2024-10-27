@@ -11,5 +11,5 @@ let redis_port = config.redis.port;
 let redis_passwd = config.redis.passwd;
 let code_prefix = "code_";
 
-
+// 导出给别的模块使用
 module.exports = {email_pass, email_user, mysql_host, mysql_port,redis_host, redis_port, redis_passwd, code_prefix}

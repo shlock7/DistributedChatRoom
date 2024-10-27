@@ -1,6 +1,7 @@
 #include "LogicSystem.h"
 #include "HttpConnection.h"
 #include "VerifyGrpcClient.h"
+#include "RedisMgr.h"
 
 void LogicSystem::RegGet(std::string url, HttpHandler handler)
 {
@@ -69,6 +70,91 @@ LogicSystem::LogicSystem()
 			return true;
 
 		});
+
+	RegPost("/user_register", [](std::shared_ptr<HttpConnection> connection) {
+		// 取出body里的数据，转成string
+		auto body_str = boost::beast::buffers_to_string(connection->_request.body().data());
+		std::cout << "receive body is " << body_str << std::endl;
+		// 设置回包，类型也是json
+		connection->_response.set(http::field::content_type, "text/json");
+		Json::Value root;
+		Json::Reader reader;
+		Json::Value src_root;
+		// 解析json请求
+		bool parse_success = reader.parse(body_str, src_root);
+		if (!parse_success)
+		{
+			std::cout << "Failed to parse JSON data!" << std::endl;
+			root["error"] = ErrorCodes::Error_Json;
+			std::string jsonstr = root.toStyledString();
+			beast::ostream(connection->_response.body()) << jsonstr;
+			return true;
+		}
+
+		auto email = src_root["email"].asString();
+		auto name = src_root["user"].asString();
+		auto pwd = src_root["passwd"].asString();
+		auto confirm = src_root["confirm"].asString();
+		auto icon = src_root["icon"].asString();
+
+		// 判断注册界面两次密码是否相同
+		//if (pwd != confirm) 
+		if (std::strcmp(pwd.c_str(), confirm.c_str()))
+		{
+			std::cout << "password err " << std::endl;
+			root["error"] = ErrorCodes::PasswdErr;
+			std::string jsonstr = root.toStyledString();
+			beast::ostream(connection->_response.body()) << jsonstr;
+			return true;
+		}
+
+		// 先查找redis中email对应的验证码是否合理
+		std::string  varify_code;
+		// 验证码写数据库的时候加了个前缀，这里get的时候也要加上
+		// 先判断验证码是否过期
+		bool b_get_varify = RedisMgr::GetInstance()->Get(CODEPREFIX+src_root["email"].asString(), varify_code);
+		if (!b_get_varify)
+		{
+			std::cout << " get varify code expired" << std::endl;
+			root["error"] = ErrorCodes::VarifyExpired;
+			std::string jsonstr = root.toStyledString();
+			beast::ostream(connection->_response.body()) << jsonstr;
+			return true;
+		}
+		// 验证码未过期，判断填写的验证码与redis中的验证码是否相同
+		if (varify_code != src_root["varifycode"].asString())
+		{
+			std::cout << " varify code error" << std::endl;
+			root["error"] = ErrorCodes::VarifyCodeErr;
+			std::string jsonstr = root.toStyledString();
+			beast::ostream(connection->_response.body()) << jsonstr;
+			return true;
+		}
+
+		// 在redis中查找用户是否已经存在
+		//bool b_usr_exist = RedisMgr::GetInstance()->ExistsKey(src_root["user"].asString());
+		//if (b_usr_exist)
+		//{
+		//	std::cout << " user exist" << std::endl;
+		//	root["error"] = ErrorCodes::UserExist;
+		//	std::string jsonstr = root.toStyledString();
+		//	beast::ostream(connection->_response.body()) << jsonstr;
+		//	return true;
+		//}
+
+		//查找数据库判断用户是否存在 这部分放到MySQL中做
+
+		// 注册成功，返回相关信息
+		root["error"] = 0;
+		root["email"] = email;
+		root["user"] = name;
+		root["passwd"] = pwd;
+		root["confirm"] = confirm;
+		root["varifycode"] = src_root["varifycode"].asString();
+		std::string jsonstr = root.toStyledString();
+		beast::ostream(connection->_response.body()) << jsonstr;
+		return true;
+	});
 
 }
 
