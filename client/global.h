@@ -15,9 +15,11 @@
 
 /*
  * 刷新qss
- *
  */
 extern std::function<void(QWidget*)> repolish;
+\
+// 异或字符串，用于加密
+extern std::function<QString(QString)> xorString;
 
 enum ReqId
 {
@@ -36,6 +38,23 @@ enum ErrorCodes
     SUCCESS = 0,
     ERR_JSON = 1,       // json解析失败
     ERR_NETWORK = 2,    // 网络错误
+};
+
+enum TipErr{
+    TIP_SUCCESS = 0,
+    TIP_EMAIL_ERR = 1,
+    TIP_PWD_ERR = 2,
+    TIP_CONFIRM_ERR = 3,
+    TIP_PWD_CONFIRM = 4,
+    TIP_VARIFY_ERR = 5,
+    TIP_USER_ERR = 6
+};
+
+// 显示密码按钮的状态
+enum ClickLbState
+{
+    Normal = 0,
+    Selected = 1
 };
 
 extern QString gate_url_prefix;
